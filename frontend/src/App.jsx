@@ -4,8 +4,9 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 // Public Pages
 import Home from './pages/Home';
 
-// Admin Pages
+// Admin Pages & Layout
 import AdminLogin from './pages/AdminLogin';
+import AdminLayout from './components/AdminLayout';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminProjects from './pages/AdminProjects';
 import AdminSkills from './pages/AdminSkills';
@@ -21,13 +22,15 @@ function App() {
         {/* Admin Authentication */}
         <Route path="/admin" element={<AdminLogin />} />
 
-        {/* Protected Admin Routes */}
-        <Route path="/admin/dashboard" element={<AdminDashboard />} />
-        <Route path="/admin/projects" element={<AdminProjects />} />
-        <Route path="/admin/skills" element={<AdminSkills />} />
-        <Route path="/admin/messages" element={<AdminMessages />} />
+        {/* Protected Admin Routes Wrapped in the Persistent Layout */}
+        <Route element={<AdminLayout />}>
+          <Route path="/admin/dashboard" element={<AdminDashboard />} />
+          <Route path="/admin/projects" element={<AdminProjects />} />
+          <Route path="/admin/skills" element={<AdminSkills />} />
+          <Route path="/admin/messages" element={<AdminMessages />} />
+        </Route>
 
-        {/* Catch-all route to redirect unknown URLs back to the home page */}
+        {/* Catch-all route */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
