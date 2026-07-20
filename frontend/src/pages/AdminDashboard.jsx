@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { uploadToCloudinary } from '../utils/cloudinaryUpload';
 
 const AdminDashboard = () => {
   const [profileData, setProfileData] = useState({
@@ -13,6 +14,7 @@ const AdminDashboard = () => {
     heroImageUrl: ''
   });
   const [isLoading, setIsLoading] = useState(true);
+  const [isUploading, setIsUploading] = useState(false);
 
   const navigate = useNavigate();
 
@@ -46,6 +48,27 @@ const AdminDashboard = () => {
 
     fetchProfile();
   }, [navigate]);
+
+  const handleFileUpload = async (e, field) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setIsUploading(true);
+    try {
+      // Pass the file to our new utility function
+      const uploadedUrl = await uploadToCloudinary(file);
+      
+      // Update the specific field (resumeUrl or heroImageUrl) in our form state
+      setProfileData({ ...profileData, [field]: uploadedUrl });
+      
+    } catch (error) {
+      console.error("Upload error:", error);
+      alert('File upload failed. Please check your connection and try again.');
+    } finally {
+      // This runs whether the upload succeeds or fails, ensuring the form unlocks
+      setIsUploading(false);
+    }
+  };
 
   const handleInputChange = (e) => {
     setProfileData({
@@ -155,31 +178,61 @@ const AdminDashboard = () => {
             </div>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-            <div>
-              <label style={{ color: 'var(--text-color)', fontSize: 'var(--small-font-size)', display: 'block', marginBottom: '0.5rem' }}>Resume URL (Cloudinary)</label>
-              <input
-                type="url"
-                name="resumeUrl"
-                value={profileData.resumeUrl}
-                onChange={handleInputChange}
-                style={{ width: '100%', padding: '1rem', borderRadius: '0.5rem', backgroundColor: 'var(--body-color)', color: 'white', border: '1px solid var(--border-color)' }}
-              />
-            </div>
-            <div>
-              <label style={{ color: 'var(--text-color)', fontSize: 'var(--small-font-size)', display: 'block', marginBottom: '0.5rem' }}>Hero Image URL (Cloudinary)</label>
-              <input
-                type="url"
-                name="heroImageUrl"
-                value={profileData.heroImageUrl}
-                onChange={handleInputChange}
-                style={{ width: '100%', padding: '1rem', borderRadius: '0.5rem', backgroundColor: 'var(--body-color)', color: 'white', border: '1px solid var(--border-color)' }}
-              />
-            </div>
+          {/* Inside your profile form JSX */}
+          <div style={{ marginBottom: '1.5rem' }}>
+            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>
+              Resume / CV (PDF)
+            </label>
+            <input 
+              type="file" 
+              accept=".pdf"
+              onChange={(e) => handleFileUpload(e, 'resumeUrl')}
+              disabled={isUploading}
+              style={{ display: 'block', marginBottom: '0.5rem' }}
+            />
+            {/* Visual feedback for the user */}
+            {isUploading && <span style={{ color: 'var(--first-color)' }}>Uploading to Cloudinary...</span>}
+            {profileData.resumeUrl && (
+              <p style={{ fontSize: '0.9rem' }}>
+                Current: <a href={profileData.resumeUrl} target="_blank" rel="noreferrer" style={{ color: 'hsl(0, 0%, 40%)' }}>View Uploaded File</a>
+              </p>
+            )}
           </div>
 
-          <button type="submit" className="nav__contact" style={{ cursor: 'pointer', border: 'none', width: '100%', justifyContent: 'center', marginTop: '1rem' }}>
-            Save Changes
+          <div style={{ marginBottom: '1.5rem' }}>
+            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>
+              Hero Image (JPG/PNG)
+            </label>
+            <input 
+              type="file" 
+              accept="image/*"
+              onChange={(e) => handleFileUpload(e, 'heroImageUrl')}
+              disabled={isUploading}
+              style={{ display: 'block', marginBottom: '0.5rem' }}
+            />
+            {isUploading && <span style={{ color: 'var(--first-color)' }}>Uploading to Cloudinary...</span>}
+            {profileData.heroImageUrl && (
+              <div style={{ marginTop: '0.5rem' }}>
+                <p style={{ fontSize: '0.9rem', marginBottom: '0.25rem' }}>Current Image:</p>
+                <img src={profileData.heroImageUrl} alt="Hero Preview" style={{ width: '150px', borderRadius: '0.5rem', border: '1px solid var(--border-color)' }} />
+              </div>
+            )}
+          </div>
+
+          {/* Make sure your submit button is also disabled during upload to prevent saving incomplete URLs! */}
+          <button 
+            type="submit" 
+            disabled={isUploading}
+            style={{ 
+              backgroundColor: isUploading ? 'gray' : 'var(--first-color)', 
+              color: 'var(--white-color)', 
+              padding: '0.75rem 1.5rem', 
+              border: 'none', 
+              borderRadius: '0.5rem', 
+              cursor: isUploading ? 'not-allowed' : 'pointer' 
+            }}
+          >
+            {isUploading ? 'Uploading Media...' : 'Save Profile Changes'}
           </button>
         </form>
       </div>
