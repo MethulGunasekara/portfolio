@@ -25,8 +25,8 @@ const createMessage = async (req, res) => {
     try {
       await sendEmail({
         email: process.env.SMTP_EMAIL, // Sending to yourself
-        subject: `New Portfolio Message from ${message.name}`,
-        message: `You have received a new message.\n\nName: ${message.name}\nEmail: ${message.email}\n\nMessage:\n${message.message}`,
+        subject: `New Portfolio Message from ${message.senderName}`,
+        message: `You have received a new message.\n\nName: ${message.senderName}\nEmail: ${message.senderEmail}\n\nMessage:\n${message.messageBody}`,
       });
     } catch (emailError) {
       // Log the error for the admin, but DO NOT fail the user's request

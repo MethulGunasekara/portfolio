@@ -12,11 +12,11 @@ const { protect } = require('../middleware/authMiddleware');
 // @route   /api/skills
 router.route('/')
   .get(getSkills)        // Public: Fetch all skills
-  .post(createSkill);    // Private/Admin: Create a new skill
+  .post(protect, createSkill);    // Private/Admin: Create a new skill
 
 // @route   /api/skills/:id
 router.route('/:id')
-  .put(updateSkill)      // Private/Admin: Update specific skill
-  .delete(deleteSkill);  // Private/Admin: Delete specific skill
+  .put(protect, updateSkill)      // Private/Admin: Update specific skill
+  .delete(protect, deleteSkill);  // Private/Admin: Delete specific skill
 
 module.exports = router;

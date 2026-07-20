@@ -15,12 +15,12 @@ router.post('/', createMessage);
 
 // @route   GET /api/messages
 // @access  Private/Admin (View Inbox)
-router.get('/', getMessages);
+router.get('/', protect, getMessages);
 
 // @route   PUT & DELETE /api/messages/:id
 // @access  Private/Admin (Manage specific message)
 router.route('/:id')
-  .put(updateMessageStatus)
-  .delete(deleteMessage);
-
+  .put(protect, updateMessageStatus)
+  .delete(protect, deleteMessage);
+  
 module.exports = router;

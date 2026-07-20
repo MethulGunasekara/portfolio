@@ -1,40 +1,30 @@
-import React from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+// src/App.jsx
+import { Routes, Route } from 'react-router-dom'
+import { useEffect } from 'react'
+import { useAccentColor } from './hooks/useAccentColor'
+import PublicLayout from './layouts/PublicLayout'
+import HomePage from './pages/HomePage'
+import ProjectPage from './pages/ProjectPage'
+import AdminLayout from './layouts/AdminLayout'
+import LoginPage from './pages/admin/LoginPage'
+import AdminDashboard from './pages/admin/AdminDashboard'
+import ProtectedRoute from './components/ProtectedRoute'
 
-// Public Pages
-import Home from './pages/Home';
+export default function App() {
+  useAccentColor()
 
-// Admin Pages & Layout
-import AdminLogin from './pages/AdminLogin';
-import AdminLayout from './components/AdminLayout';
-import AdminDashboard from './pages/AdminDashboard';
-import AdminProjects from './pages/AdminProjects';
-import AdminSkills from './pages/AdminSkills';
-import AdminMessages from './pages/AdminMessages';
-
-function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        {/* Public Portfolio Route */}
-        <Route path="/" element={<Home />} />
-
-        {/* Admin Authentication */}
-        <Route path="/admin" element={<AdminLogin />} />
-
-        {/* Protected Admin Routes Wrapped in the Persistent Layout */}
+    <Routes>
+      <Route element={<PublicLayout />}>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/project/:id" element={<ProjectPage />} />
+      </Route>
+      <Route path="/admin/login" element={<LoginPage />} />
+      <Route element={<ProtectedRoute />}>
         <Route element={<AdminLayout />}>
-          <Route path="/admin/dashboard" element={<AdminDashboard />} />
-          <Route path="/admin/projects" element={<AdminProjects />} />
-          <Route path="/admin/skills" element={<AdminSkills />} />
-          <Route path="/admin/messages" element={<AdminMessages />} />
+          <Route path="/admin" element={<AdminDashboard />} />
         </Route>
-
-        {/* Catch-all route */}
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-    </BrowserRouter>
-  );
+      </Route>
+    </Routes>
+  )
 }
-
-export default App;

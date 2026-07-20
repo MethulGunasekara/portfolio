@@ -12,6 +12,16 @@ const getProjects = async (req, res) => {
   }
 };
 
+const getProjectById = async (req, res) => {
+  try {
+    const project = await Project.findById(req.params.id)
+    if (!project) return res.status(404).json({ message: 'Project not found' })
+    res.status(200).json(project)
+  } catch (error) {
+    res.status(500).json({ message: 'Server Error', error: error.message })
+  }
+}
+
 // @desc    Create a new project
 // @route   POST /api/admin/projects
 // @access  Private/Admin
@@ -64,6 +74,7 @@ const deleteProject = async (req, res) => {
 
 module.exports = {
   getProjects,
+  getProjectById,
   createProject,
   updateProject,
   deleteProject

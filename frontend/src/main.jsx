@@ -1,14 +1,30 @@
+// src/main.jsx (updated)
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import './index.css'
+import { BrowserRouter } from 'react-router-dom'
+import { Toaster } from 'react-hot-toast'
 import App from './App.jsx'
-import axios from 'axios';
-import 'remixicon/fonts/remixicon.css'
-
-axios.defaults.baseURL = import.meta.env.VITE_API_URL || '';
+import { AuthProvider } from './contexts/AuthContext.jsx'
+import './index.css'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <App />
+    <BrowserRouter>
+      <AuthProvider>
+        <App />
+        <Toaster
+          position="bottom-right"
+          toastOptions={{
+            style: {
+              background: '#12121A',
+              color: '#F0F0F5',
+              border: '1px solid #1E1E2E',
+              borderRadius: '8px',
+              fontFamily: 'Inter, sans-serif',
+            },
+          }}
+        />
+      </AuthProvider>
+    </BrowserRouter>
   </StrictMode>,
 )

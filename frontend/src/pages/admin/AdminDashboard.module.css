@@ -1,0 +1,17 @@
+/* src/pages/admin/AdminDashboard.module.css */
+.dashboard {}
+
+.pageTitle {
+  font-size: 28px;
+  margin-bottom: 8px;
+}
+
+.pageSub {
+  color: var(--text-muted);
+  font-size: 14px;
+  margin-bottom: 48px;
+}
+
+.section {
+  margin-bottom: 64px;
+}
