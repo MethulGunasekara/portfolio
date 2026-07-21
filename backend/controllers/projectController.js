@@ -40,9 +40,9 @@ const createProject = async (req, res) => {
 const updateProject = async (req, res) => {
   try {
     const updatedProject = await Project.findByIdAndUpdate(
-      req.params.id, 
-      req.body, 
-      { new: true, runValidators: true } // Returns the updated document and runs schema validation
+      req.params.id,
+      req.body,
+      { returnDocument: 'after', runValidators: true }
     );
 
     if (!updatedProject) {

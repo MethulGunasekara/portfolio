@@ -29,9 +29,9 @@ const updateProfile = async (req, res) => {
     // upsert: true creates the document if it doesn't exist yet.
     // new: true returns the modified document rather than the original.
     const updatedProfile = await Profile.findOneAndUpdate(
-      {}, 
-      { fullName, jobTitle, bio, resumeUrl, githubUrl, linkedinUrl, heroImageUrl },
-      { new: true, upsert: true, runValidators: true }
+      {},
+      { fullName, jobTitle, bio, resumeUrl, githubUrl, linkedinUrl, heroImageUrl, accentColor },
+      { returnDocument: 'after', upsert: true, runValidators: true }
     );
 
     res.status(200).json(updatedProfile);

@@ -4,6 +4,38 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const cloudinary = require('cloudinary').v2;
 
+const uploadToCloudinary = (buffer, originalName, resourceType = 'image') => {
+  return new Promise((resolve, reject) => {
+    const baseOptions = {
+      folder: 'portfolio',
+      resource_type: resourceType === 'raw' ? 'raw' : 'auto',
+      use_filename: true,
+      unique_filename: false,
+    };
+
+    const uploadOptions = resourceType === 'raw'
+      ? { ...baseOptions, resource_type: 'raw' }
+      : baseOptions;
+
+    cloudinary.uploader.upload_stream(
+      uploadOptions,
+      (error, result) => {
+        if (error) {
+          reject(new Error(error.message || 'Cloudinary upload failed'));
+          return;
+        }
+
+        if (!result?.secure_url) {
+          reject(new Error('Cloudinary did not return a URL'));
+          return;
+        }
+
+        resolve(result.secure_url);
+      }
+    ).end(buffer);
+  });
+};
+
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
@@ -89,9 +121,9 @@ const updateProfile = async (req, res) => {
 
     // Update the existing document with the incoming data
     const updatedProfile = await Profile.findOneAndUpdate(
-      {}, // Empty filter matches the first document
+      {},
       req.body,
-      { new: true } // Returns the updated document instead of the old one
+      { returnDocument: 'after' }
     );
 
     res.status(200).json(updatedProfile);
@@ -100,24 +132,48 @@ const updateProfile = async (req, res) => {
   }
 };
 
+// @desc    Upload a file to Cloudinary via the backend
+// @route   POST /api/admin/upload
+// @access  Private
+const uploadMedia = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: 'No file uploaded' });
+    }
+
+    const resourceType = req.body.resourceType || 'image';
+    const url = await uploadToCloudinary(req.file.buffer, req.file.originalname, resourceType);
+
+    res.status(200).json({ url });
+  } catch (error) {
+    res.status(500).json({ message: 'Upload failed', error: error.message });
+  }
+};
+
 // @desc    Generate Cloudinary upload signature
 // @route   GET /api/admin/cloudinary-signature
 // @access  Private
 const getCloudinarySignature = (req, res) => {
   try {
-    const timestamp = Math.round(new Date().getTime() / 1000);
-    
-    // We sign the timestamp using your secret key
-    const signature = cloudinary.utils.api_sign_request(
-      { timestamp: timestamp },
-      process.env.CLOUDINARY_API_SECRET
-    );
+    const timestamp = Math.round(new Date().getTime() / 1000)
+    const uploadPreset = 'portfolio_uploads'
 
-    res.status(200).json({ timestamp, signature });
+    const signature = cloudinary.utils.api_sign_request(
+      { timestamp, upload_preset: uploadPreset },
+      process.env.CLOUDINARY_API_SECRET
+    )
+
+    res.status(200).json({
+      timestamp,
+      signature,
+      uploadPreset,
+      cloudName: process.env.CLOUDINARY_CLOUD_NAME,
+      apiKey: process.env.CLOUDINARY_API_KEY,
+    })
   } catch (error) {
-    res.status(500).json({ message: 'Signature generation failed', error: error.message });
+    res.status(500).json({ message: 'Signature generation failed', error: error.message })
   }
-};
+}
 
 // Helper function to generate JWT
 const generateToken = (id) => {
@@ -131,5 +187,6 @@ module.exports = {
   registerAdmin,
   loginAdmin,
   updateProfile,
+  uploadMedia,
   getCloudinarySignature
 };

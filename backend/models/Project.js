@@ -9,7 +9,7 @@ const projectSchema = new mongoose.Schema({
   technologies: { type: [String], required: true },
   githubLink: { type: String },
   liveLink: { type: String },
-  previewImageUrl: { type: String },
+  previewImages: { type: [String], default: [] },
   videoUrl: { type: String },
   problemStatement: { type: String },
   solution: { type: String },

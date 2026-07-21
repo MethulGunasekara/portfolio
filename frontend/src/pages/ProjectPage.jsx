@@ -9,16 +9,16 @@ export default function ProjectPage() {
   const navigate = useNavigate()
   const [project, setProject] = useState(null)
   const [loading, setLoading] = useState(true)
-  const [previewTab, setPreviewTab] = useState('preview') // 'preview' | 'video' | 'image'
+  const [previewTab, setPreviewTab] = useState(null)
 
   useEffect(() => {
-    api.get(`/projects/${id}`)
+    api.get('/projects/' + id)
       .then(r => {
-        setProject(r.data)
-        // Auto-select available preview type
-        if (r.data.liveLink) setPreviewTab('preview')
-        else if (r.data.videoUrl) setPreviewTab('video')
-        else if (r.data.previewImageUrl) setPreviewTab('image')
+        const p = r.data
+        setProject(p)
+        if (p.liveLink) setPreviewTab('preview')
+        else if (p.videoUrl) setPreviewTab('video')
+        else if (p.previewImages && p.previewImages.length > 0) setPreviewTab('image')
       })
       .catch(() => navigate('/'))
       .finally(() => setLoading(false))
@@ -32,29 +32,24 @@ export default function ProjectPage() {
 
   if (!project) return null
 
-  const hasPreview = project.liveLink || project.videoUrl || project.previewImageUrl
+  const allImages = project.previewImages || []
 
   const availableTabs = [
-    project.liveLink && { key: 'preview', icon: 'ri-global-line', label: 'Live Site' },
-    project.videoUrl && { key: 'video', icon: 'ri-video-line', label: 'Demo Video' },
-    project.previewImageUrl && { key: 'image', icon: 'ri-image-line', label: 'Screenshots' },
+    project.liveLink ? { key: 'preview', label: 'Live Site' } : null,
+    project.videoUrl ? { key: 'video', label: 'Demo Video' } : null,
+    allImages.length > 0 ? { key: 'image', label: 'Screenshots (' + allImages.length + ')' } : null,
   ].filter(Boolean)
 
   return (
     <div className={styles.page}>
-      {/* Hero */}
       <div className={styles.hero}>
         <div className={styles.heroInner}>
-          <button className={styles.back} onClick={() => navigate(-1)}>
-            <i className="ri-arrow-left-line" /> Back
-          </button>
+          <button className={styles.back} onClick={() => navigate(-1)}>Back</button>
 
           <div className={styles.heroMeta}>
-            <div className={styles.tags}>
-              {project.technologies?.map(t => (
-                <span key={t} className={styles.tag}>{t}</span>
-              ))}
-            </div>
+            {(project.technologies || []).map(t => (
+              <span key={t} className={styles.tag}>{t}</span>
+            ))}
             {project.category && <span className={styles.catBadge}>{project.category}</span>}
           </div>
 
@@ -65,12 +60,12 @@ export default function ProjectPage() {
           <div className={styles.heroActions}>
             {project.liveLink && (
               <a href={project.liveLink} target="_blank" rel="noreferrer" className={styles.btnPrimary}>
-                <i className="ri-external-link-line" /> View Live
+                View Live
               </a>
             )}
             {project.githubLink && (
               <a href={project.githubLink} target="_blank" rel="noreferrer" className={styles.btnGhost}>
-                <i className="ri-github-line" /> Source Code
+                Source Code
               </a>
             )}
           </div>
@@ -78,110 +73,109 @@ export default function ProjectPage() {
       </div>
 
       <div className={styles.body}>
-        {/* Preview Panel */}
-        {hasPreview && (
+
+        {availableTabs.length > 0 && (
           <section className={styles.previewSection}>
             {availableTabs.length > 1 && (
               <div className={styles.tabs}>
                 {availableTabs.map(tab => (
                   <button
                     key={tab.key}
-                    className={`${styles.tab} ${previewTab === tab.key ? styles.tabActive : ''}`}
+                    className={previewTab === tab.key ? styles.tabActive : styles.tab}
                     onClick={() => setPreviewTab(tab.key)}
                   >
-                    <i className={tab.icon} /> {tab.label}
+                    {tab.label}
                   </button>
                 ))}
               </div>
             )}
-
             <div className={styles.previewBox}>
               {previewTab === 'preview' && project.liveLink && (
-                <iframe
-                  src={project.liveLink}
-                  title={`${project.title} live preview`}
-                  className={styles.iframe}
-                  sandbox="allow-scripts allow-same-origin allow-forms"
-                />
+                <iframe src={project.liveLink} title={project.title} className={styles.iframe} sandbox="allow-scripts allow-same-origin allow-forms" />
               )}
               {previewTab === 'video' && project.videoUrl && (
-                <video
-                  src={project.videoUrl}
-                  controls
-                  className={styles.video}
-                  poster={project.previewImageUrl}
-                />
+                <video src={project.videoUrl} controls className={styles.video} />
               )}
-              {previewTab === 'image' && project.previewImageUrl && (
-                <img
-                  src={project.previewImageUrl}
-                  alt={project.title}
-                  className={styles.previewImg}
-                />
+              {previewTab === 'image' && allImages.length > 0 && (
+                allImages.length === 1 ? (
+                  <img src={allImages[0]} alt={project.title} className={styles.previewImg} />
+                ) : (
+                  <div className={styles.galleryGrid}>
+                    {allImages.map((url, i) => (
+                      <img key={i} src={url} alt={'Screenshot ' + (i + 1)} className={styles.galleryImg} onClick={() => window.open(url, '_blank')} />
+                    ))}
+                  </div>
+                )
               )}
             </div>
           </section>
         )}
 
         <div className={styles.twoCol}>
-          {/* Left: Description + Documentation */}
           <div className={styles.mainContent}>
-            <section className={styles.contentSection}>
-              <h2 className={styles.sectionTitle}>
-                <i className="ri-information-line" /> Overview
-              </h2>
-              <p className={styles.desc}>{project.description}</p>
-            </section>
+
+            {project.description && (
+              <section className={styles.contentSection}>
+                <h2 className={styles.sectionTitle}>Overview</h2>
+                <p className={styles.desc}>{project.description}</p>
+              </section>
+            )}
 
             {project.problemStatement && (
               <section className={styles.contentSection}>
-                <h2 className={styles.sectionTitle}>
-                  <i className="ri-bug-line" /> Problem Statement
-                </h2>
+                <h2 className={styles.sectionTitle}>Problem Statement</h2>
                 <p className={styles.desc}>{project.problemStatement}</p>
               </section>
             )}
 
             {project.solution && (
               <section className={styles.contentSection}>
-                <h2 className={styles.sectionTitle}>
-                  <i className="ri-lightbulb-line" /> Solution Approach
-                </h2>
+                <h2 className={styles.sectionTitle}>Solution Approach</h2>
                 <p className={styles.desc}>{project.solution}</p>
+              </section>
+            )}
+
+            {project.outcomes && (
+              <section className={styles.contentSection}>
+                <h2 className={styles.sectionTitle}>Outcomes and Impact</h2>
+                <p className={styles.desc}>{project.outcomes}</p>
               </section>
             )}
 
             {project.documentation && (
               <section className={styles.contentSection}>
-                <h2 className={styles.sectionTitle}>
-                  <i className="ri-file-text-line" /> Documentation
-                </h2>
+                <h2 className={styles.sectionTitle}>Documentation</h2>
                 <div className={styles.docBox}>
                   <pre className={styles.docContent}>{project.documentation}</pre>
                 </div>
               </section>
             )}
 
-            {project.outcomes && (
-              <section className={styles.contentSection}>
-                <h2 className={styles.sectionTitle}>
-                  <i className="ri-trophy-line" /> Outcomes & Impact
-                </h2>
-                <p className={styles.desc}>{project.outcomes}</p>
-              </section>
-            )}
           </div>
 
-          {/* Right: Sidebar details */}
           <aside className={styles.sidebar}>
-            <div className={styles.sideCard}>
-              <h3 className={styles.sideTitle}>Tech Stack</h3>
-              <div className={styles.techList}>
-                {project.technologies?.map(t => (
-                  <span key={t} className={styles.techPill}>{t}</span>
-                ))}
+
+            {project.technologies && project.technologies.length > 0 && (
+              <div className={styles.sideCard}>
+                <h3 className={styles.sideTitle}>Tech Stack</h3>
+                <div className={styles.techList}>
+                  {project.technologies.map(t => (
+                    <span key={t} className={styles.techPill}>{t}</span>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
+
+            {project.keyFeatures && project.keyFeatures.length > 0 && (
+              <div className={styles.sideCard}>
+                <h3 className={styles.sideTitle}>Key Features</h3>
+                <ul className={styles.featureList}>
+                  {project.keyFeatures.map((f, i) => (
+                    <li key={i} className={styles.featureItem}>{f}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
 
             {project.myRole && (
               <div className={styles.sideCard}>
@@ -211,24 +205,12 @@ export default function ProjectPage() {
               </div>
             )}
 
-            {project.keyFeatures?.length > 0 && (
-              <div className={styles.sideCard}>
-                <h3 className={styles.sideTitle}>Key Features</h3>
-                <ul className={styles.featureList}>
-                  {project.keyFeatures.map((f, i) => (
-                    <li key={i} className={styles.featureItem}>
-                      <i className="ri-check-line" /> {f}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-
             {project.documentationUrl && (
               <a href={project.documentationUrl} target="_blank" rel="noreferrer" className={styles.docLink}>
-                <i className="ri-file-pdf-line" /> Full Documentation
+                Full Documentation
               </a>
             )}
+
           </aside>
         </div>
       </div>

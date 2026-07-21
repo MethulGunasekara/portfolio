@@ -50,7 +50,7 @@ const updateMessageStatus = async (req, res) => {
     const updatedMessage = await Message.findByIdAndUpdate(
       req.params.id,
       { status },
-      { new: true, runValidators: true }
+      { returnDocument: 'after', runValidators: true }
     );
 
     if (!updatedMessage) {

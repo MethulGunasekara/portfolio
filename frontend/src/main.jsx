@@ -6,6 +6,7 @@ import { Toaster } from 'react-hot-toast'
 import App from './App.jsx'
 import { AuthProvider } from './contexts/AuthContext.jsx'
 import './index.css'
+import 'remixicon/fonts/remixicon.css'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
