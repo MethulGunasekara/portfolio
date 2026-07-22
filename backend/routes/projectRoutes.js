@@ -12,12 +12,12 @@ const { protect } = require('../middleware/authMiddleware');
 
 // @route   /api/projects
 router.route('/')
-  .get(protect, getProjects)        // Public: Fetch all projects
+  .get(getProjects)        // Public: Fetch all projects
   .post(protect, createProject);    // Private/Admin: Create a new project
 
 // @route   /api/projects/:id
 router.route('/:id')
-  .get(protect, getProjectById)     // Private/Admin: Fetch specific project
+  .get(getProjectById)     // Private/Admin: Fetch specific project
   .put(protect, updateProject)      // Private/Admin: Update specific project
   .delete(protect, deleteProject);  // Private/Admin: Delete specific project
 
