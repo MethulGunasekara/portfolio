@@ -17,7 +17,7 @@ app.use(express.json());
 app.use(cors({
   origin: [
     'http://localhost:5173',
-    'https://portfolio.vercel.app',
+    'https://portfolio-seven-gilt-1ewwhl4bc2.vercel.app',
   ],
   credentials: true,
 }));
