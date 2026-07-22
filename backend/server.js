@@ -22,6 +22,10 @@ app.use(cors({
   credentials: true,
 }));
 
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'ok' })
+})
+
 // Routes
 app.use('/api/profile', profileRoutes);
 app.use('/api/projects', projectRoutes);
