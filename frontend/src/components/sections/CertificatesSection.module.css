@@ -1,0 +1,136 @@
+.section { padding: 120px 0; }
+
+.inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 40px;
+}
+
+.labelRow {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 48px;
+}
+
+.label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--accent);
+}
+
+.labelLine { flex: 1; height: 1px; background: var(--border); }
+
+.heading {
+  font-size: clamp(28px, 3.5vw, 44px);
+  margin-bottom: 36px;
+}
+
+.scrollWrapper {
+  overflow-x: auto;
+  padding-bottom: 16px;
+  cursor: grab;
+}
+
+.scrollWrapper:active { cursor: grabbing; }
+
+.scrollWrapper::-webkit-scrollbar { height: 4px; }
+.scrollWrapper::-webkit-scrollbar-track { background: var(--bg); }
+.scrollWrapper::-webkit-scrollbar-thumb { background: var(--border-light); border-radius: 2px; }
+
+.track {
+  display: flex;
+  gap: 16px;
+  width: max-content;
+  padding: 4px 2px 8px;
+}
+
+.card {
+  width: 220px;
+  flex-shrink: 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transition: all 0.25s;
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  color: inherit;
+}
+
+.card:hover {
+  border-color: var(--accent);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.4);
+}
+
+.cardImg {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+  display: block;
+  border-bottom: 1px solid var(--border);
+}
+
+.cardImgPlaceholder {
+  width: 100%;
+  height: 140px;
+  background: var(--surface-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
+  color: var(--accent);
+  border-bottom: 1px solid var(--border);
+}
+
+.cardBody {
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.cardTitle {
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--text);
+}
+
+.cardIssuer {
+  font-size: 12px;
+  color: var(--accent);
+  font-weight: 500;
+}
+
+.cardDate {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.verifyBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 8px;
+  background: var(--accent-dim);
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  padding: 3px 8px;
+  border-radius: 100px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  width: fit-content;
+}
+
+@media (max-width: 768px) {
+  .inner { padding: 0 20px; }
+  .section { padding: 80px 0; }
+}

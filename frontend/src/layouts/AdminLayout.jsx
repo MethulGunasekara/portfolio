@@ -25,6 +25,7 @@ export default function AdminLayout() {
           <a href="#skills" className={styles.navItem}><i className="ri-code-line" /> Skills</a>
           <a href="#messages" className={styles.navItem}><i className="ri-mail-line" /> Messages</a>
           <a href="#appearance" className={styles.navItem}><i className="ri-palette-line" /> Appearance</a>
+          <a href="#certificates" className={styles.navItem}>Certificates</a>
         </nav>
         <button className={styles.logoutBtn} onClick={handleLogout}>
           <i className="ri-logout-box-line" /> Logout

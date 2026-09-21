@@ -1,12 +1,9 @@
-// src/pages/admin/AdminDashboard.jsx
-import { useEffect, useState } from 'react'
-import api from '../../api/axios'
-import toast from 'react-hot-toast'
 import ProfileEditor from '../../components/admin/ProfileEditor'
 import ProjectManager from '../../components/admin/ProjectManager'
 import SkillManager from '../../components/admin/SkillManager'
 import MessageInbox from '../../components/admin/MessageInbox'
 import AppearanceEditor from '../../components/admin/AppearanceEditor'
+import CertificateManager from '../../components/admin/CertificateManager'
 import styles from './AdminDashboard.module.css'
 
 export default function AdminDashboard() {
@@ -29,6 +26,10 @@ export default function AdminDashboard() {
 
       <section id="skills" className={styles.section}>
         <SkillManager />
+      </section>
+
+      <section id="certificates" className={styles.section}>
+        <CertificateManager />
       </section>
 
       <section id="messages" className={styles.section}>
