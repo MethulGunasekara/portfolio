@@ -34,7 +34,6 @@ export default function HeroSection({ profile }) {
 
           <h1 className={styles.heading}>
             <span className={styles.hi}>Hi, I'm</span>
-            <br />
             <span
               className={styles.glitch}
               ref={glitchRef}

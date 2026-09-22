@@ -1,4 +1,4 @@
-.section { padding: 80px 0; }
+.section { padding: 50px 0; }
 
 .inner {
   max-width: 1200px;
@@ -10,7 +10,7 @@
   display: flex;
   align-items: center;
   gap: 16px;
-  margin-bottom: 32px;
+  margin-bottom: 24px;
 }
 
 .label {
@@ -25,7 +25,7 @@
 
 .heading {
   font-size: clamp(28px, 3.5vw, 44px);
-  margin-bottom: 24px;
+  margin-bottom: 20px;
 }
 
 .scrollWrapper {
