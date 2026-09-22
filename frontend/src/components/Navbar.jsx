@@ -1,4 +1,3 @@
-// src/components/Navbar.jsx
 import { useState, useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import styles from './Navbar.module.css'
@@ -21,9 +20,10 @@ export default function Navbar() {
         { href: '#about', label: 'About' },
         { href: '#projects', label: 'Projects' },
         { href: '#skills', label: 'Skills' },
+        { href: '#certificates', label: 'Certificates' },
         { href: '#contact', label: 'Contact' },
       ]
-    : [{ href: '/', label: '← Back', isRoute: true }]
+    : [{ href: '/', label: 'Back', isRoute: true }]
 
   return (
     <header className={`${styles.header} ${scrolled ? styles.scrolled : ''}`}>
@@ -34,7 +34,7 @@ export default function Navbar() {
         </Link>
 
         <nav className={`${styles.nav} ${menuOpen ? styles.open : ''}`}>
-          {links.map((l) =>
+          {links.map(l =>
             l.isRoute ? (
               <Link key={l.href} to={l.href} className={styles.link} onClick={() => setMenuOpen(false)}>
                 {l.label}
@@ -48,8 +48,8 @@ export default function Navbar() {
         </nav>
 
         <button className={styles.burger} onClick={() => setMenuOpen(!menuOpen)} aria-label="Toggle menu">
-          <span className={menuOpen ? styles.open : ''} />
-          <span className={menuOpen ? styles.open : ''} />
+          <span />
+          <span />
         </button>
       </div>
     </header>
