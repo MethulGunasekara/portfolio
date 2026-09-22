@@ -1,6 +1,6 @@
 /* src/components/sections/ContactSection.module.css */
 .section {
-  padding: 120px 0;
+  padding: 80px 0;
   position: relative;
 }
 
@@ -24,7 +24,7 @@
   display: flex;
   align-items: center;
   gap: 16px;
-  margin-bottom: 48px;
+  margin-bottom: 32px;
 }
 
 .label {

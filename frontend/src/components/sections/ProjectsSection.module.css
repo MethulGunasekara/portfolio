@@ -1,6 +1,6 @@
 /* src/components/sections/ProjectsSection.module.css */
 .section {
-  padding: 120px 0;
+  padding: 80px 0;
   position: relative;
 }
 
@@ -14,7 +14,7 @@
   display: flex;
   align-items: center;
   gap: 16px;
-  margin-bottom: 48px;
+  margin-bottom: 32px;
 }
 
 .label {
@@ -31,7 +31,7 @@
   background: var(--border);
 }
 
-.header { margin-bottom: 56px; }
+.header { margin-bottom: 36px; }
 
 .heading {
   font-size: clamp(28px, 3.5vw, 44px);
